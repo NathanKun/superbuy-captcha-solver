@@ -7,7 +7,9 @@ from io import BytesIO
 
 import requests
 import matplotlib.pyplot as plt
-from PIL import Image
+from PIL import Image, ImageTk
+
+import tkinter as tk 
 
 url = 'https://login.superbuy.com/api/site/captcha'
 folder = os.getcwd() + '\\images\\'
@@ -23,7 +25,7 @@ class downloadCaptchaThread (threading.Thread):
         self.targetFolder = targetFolder
         
     def run(self):
-        print ("开始线程：" + self.name)
+        print ("Start Thread：" + self.name)
 
         # download images
         print('Downloading ' + str(self.imgsPerThread) + ' images for captcha ' + self.captchaText + '...')
@@ -31,7 +33,7 @@ class downloadCaptchaThread (threading.Thread):
             with open(self.targetFolder + str(i) + '.png', 'wb') as f:
                 f.write(requests.get(url, headers=self.headers).content)
         
-        print ("退出线程：" + self.name)
+        print ("End Thread：" + self.name)
 
 
 
@@ -43,7 +45,7 @@ def genCookieHeaders():
 
 def main():
     imgsPerThread = 128
-    nbOfThreads = 5
+    nbOfThreads = 16
     threads = [None] * nbOfThreads
 
     for threadCount in range(nbOfThreads):
@@ -57,8 +59,11 @@ def main():
         firstImage = Image.open(BytesIO(requestContent))
 
         # plot
-        imgplot = plt.imshow(firstImage)
-        plt.show()
+        root = tk.Tk()
+        tkimage = ImageTk.PhotoImage(firstImage)
+        tk.Label(root, image=tkimage).pack()
+        root.focus_force()
+        root.mainloop()
 
         # input the captcha text
         captchaText = input('Enter the captcha:\n')
@@ -78,7 +83,7 @@ def main():
     for t in threads:
         t.join()
 
-    print ("退出主线程")
+    print ("Exit Main Thread")
 
 if __name__ == '__main__':
     main()
