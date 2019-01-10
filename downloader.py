@@ -6,10 +6,8 @@ from datetime import datetime
 from io import BytesIO
 
 import requests
-import matplotlib.pyplot as plt
-from PIL import Image, ImageTk
-
 import tkinter as tk 
+from PIL import Image, ImageTk
 
 url = 'https://login.superbuy.com/api/site/captcha'
 folder = os.getcwd() + '\\images\\'
